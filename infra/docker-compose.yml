@@ -1,0 +1,231 @@
+x-worker-environment: &worker-environment
+  MARGIN_ENV: local
+  MARGIN_AUTH_HEADER_FALLBACK: ${MARGIN_COMPOSE_AUTH_HEADER_FALLBACK:-true}
+  MARGIN_AUTH_DEPLOYMENT_PROFILE: ${MARGIN_COMPOSE_AUTH_DEPLOYMENT_PROFILE:-external_oidc}
+  MARGIN_KEYCLOAK_PROFILE_ENABLED: ${MARGIN_COMPOSE_KEYCLOAK_PROFILE_ENABLED:-false}
+  MARGIN_OIDC_ISSUER_URL: ${MARGIN_COMPOSE_OIDC_ISSUER_URL:-}
+  MARGIN_OIDC_JWKS_URL: ${MARGIN_COMPOSE_OIDC_JWKS_URL:-}
+  MARGIN_OIDC_VERIFY_SIGNATURE: ${MARGIN_COMPOSE_OIDC_VERIFY_SIGNATURE:-false}
+  MARGIN_CELERY_TASK_ALWAYS_EAGER: "false"
+  MARGIN_EMBEDDING_PROVIDER_ID: ${MARGIN_EMBEDDING_PROVIDER_ID:-local-sentence-transformers}
+  MARGIN_EMBEDDING_MODEL_ID: ${MARGIN_EMBEDDING_MODEL_ID:-BAAI/bge-small-en-v1.5}
+  MARGIN_EMBEDDING_INDEX_VERSION: ${MARGIN_EMBEDDING_INDEX_VERSION:-bge-small-en-v1.5-v1}
+  MARGIN_EMBEDDING_MODEL_CACHE_DIR: ${MARGIN_EMBEDDING_MODEL_CACHE_DIR:-/models/sentence-transformers}
+  MARGIN_RERANKER_PROVIDER_ID: ${MARGIN_RERANKER_PROVIDER_ID:-local-cross-encoder}
+  MARGIN_RERANKER_MODEL_ID: ${MARGIN_RERANKER_MODEL_ID:-BAAI/bge-reranker-base}
+  MARGIN_RERANKER_MODEL_CACHE_DIR: ${MARGIN_RERANKER_MODEL_CACHE_DIR:-/models/sentence-transformers}
+  HF_HUB_DISABLE_XET: ${HF_HUB_DISABLE_XET:-1}
+
+x-worker-base: &worker-base
+  build:
+    context: ..
+    dockerfile: workers/Dockerfile
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  env_file:
+    - ../.env
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    object-store-init:
+      condition: service_completed_successfully
+    model-cache-init:
+      condition: service_completed_successfully
+  volumes:
+    - model-cache:/models
+
+services:
+  postgres:
+    # PostgreSQL 18.4 with pgvector 0.8.5. The tag is pinned instead of the
+    # floating pg18 tag so the server minor version stays reproducible.
+    image: pgvector/pgvector:0.8.5-pg18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-margin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-margin}
+      POSTGRES_DB: ${POSTGRES_DB:-margin}
+    ports:
+      - "127.0.0.1:${MARGIN_POSTGRES_HOST_PORT:-15432}:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER:-margin} -d $${POSTGRES_DB:-margin}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      # PostgreSQL 18 stores the cluster in /var/lib/postgresql/<major>/docker and
+      # declares /var/lib/postgresql as its volume, so the named volume is mounted
+      # at that level rather than at the pre-18 /var/lib/postgresql/data path.
+      - postgres-data:/var/lib/postgresql
+      - ./postgres/init-keycloak-db.sh:/docker-entrypoint-initdb.d/010-keycloak-db.sh:ro
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - ../.env
+    environment:
+      MARGIN_ENV: local
+      MARGIN_AUTH_HEADER_FALLBACK: ${MARGIN_COMPOSE_AUTH_HEADER_FALLBACK:-true}
+      MARGIN_AUTH_DEPLOYMENT_PROFILE: ${MARGIN_COMPOSE_AUTH_DEPLOYMENT_PROFILE:-external_oidc}
+      MARGIN_KEYCLOAK_PROFILE_ENABLED: ${MARGIN_COMPOSE_KEYCLOAK_PROFILE_ENABLED:-false}
+      MARGIN_OIDC_ISSUER_URL: ${MARGIN_COMPOSE_OIDC_ISSUER_URL:-}
+      MARGIN_OIDC_JWKS_URL: ${MARGIN_COMPOSE_OIDC_JWKS_URL:-}
+      MARGIN_OIDC_VERIFY_SIGNATURE: ${MARGIN_COMPOSE_OIDC_VERIFY_SIGNATURE:-false}
+      MARGIN_EMBEDDING_PROVIDER_ID: ${MARGIN_EMBEDDING_PROVIDER_ID:-local-sentence-transformers}
+      MARGIN_EMBEDDING_MODEL_ID: ${MARGIN_EMBEDDING_MODEL_ID:-BAAI/bge-small-en-v1.5}
+      MARGIN_EMBEDDING_INDEX_VERSION: ${MARGIN_EMBEDDING_INDEX_VERSION:-bge-small-en-v1.5-v1}
+      MARGIN_EMBEDDING_MODEL_CACHE_DIR: ${MARGIN_EMBEDDING_MODEL_CACHE_DIR:-/models/sentence-transformers}
+      MARGIN_RERANKER_PROVIDER_ID: ${MARGIN_RERANKER_PROVIDER_ID:-local-cross-encoder}
+      MARGIN_RERANKER_MODEL_ID: ${MARGIN_RERANKER_MODEL_ID:-BAAI/bge-reranker-base}
+      MARGIN_RERANKER_MODEL_CACHE_DIR: ${MARGIN_RERANKER_MODEL_CACHE_DIR:-/models/sentence-transformers}
+      HF_HUB_DISABLE_XET: ${HF_HUB_DISABLE_XET:-1}
+      MARGIN_PLANTUML_CMD: ${MARGIN_PLANTUML_CMD:-plantuml}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=5).read()",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    volumes:
+      - model-cache:/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      object-store-init:
+        condition: service_completed_successfully
+      model-cache-init:
+        condition: service_completed_successfully
+
+  model-cache-init:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - ../.env
+    environment:
+      MARGIN_EMBEDDING_PROVIDER_ID: ${MARGIN_EMBEDDING_PROVIDER_ID:-local-sentence-transformers}
+      MARGIN_EMBEDDING_MODEL_ID: ${MARGIN_EMBEDDING_MODEL_ID:-BAAI/bge-small-en-v1.5}
+      MARGIN_EMBEDDING_INDEX_VERSION: ${MARGIN_EMBEDDING_INDEX_VERSION:-bge-small-en-v1.5-v1}
+      MARGIN_EMBEDDING_MODEL_CACHE_DIR: ${MARGIN_EMBEDDING_MODEL_CACHE_DIR:-/models/sentence-transformers}
+      MARGIN_RERANKER_PROVIDER_ID: ${MARGIN_RERANKER_PROVIDER_ID:-local-cross-encoder}
+      MARGIN_RERANKER_MODEL_ID: ${MARGIN_RERANKER_MODEL_ID:-BAAI/bge-reranker-base}
+      MARGIN_RERANKER_MODEL_CACHE_DIR: ${MARGIN_RERANKER_MODEL_CACHE_DIR:-/models/sentence-transformers}
+      HF_HUB_DISABLE_XET: ${HF_HUB_DISABLE_XET:-1}
+    command:
+      [
+        "python",
+        "-c",
+        "import os; from margin_embedding.factory import create_embedding_provider; from margin_retrieval.local_runtime import local_reranker_provider; create_embedding_provider(); enabled = os.getenv('MARGIN_RETRIEVAL_RERANK_ENABLED', 'false').strip().lower() in {'1', 'true', 'yes'}; local_reranker_provider() if enabled else None; print('local retrieval models are ready')",
+      ]
+    volumes:
+      - model-cache:/models
+
+  worker:
+    <<: *worker-base
+    environment:
+      <<: *worker-environment
+      MARGIN_CELERY_CONCURRENCY: ${MARGIN_WORKER_CONCURRENCY:-1}
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_AUTH_AUTO_REDIRECT: ${MARGIN_COMPOSE_VITE_AUTH_AUTO_REDIRECT:-true}
+        VITE_OIDC_ISSUER: ${MARGIN_COMPOSE_VITE_OIDC_ISSUER:-http://localhost:8082/realms/margin}
+        VITE_OIDC_CLIENT_ID: ${VITE_OIDC_CLIENT_ID:-margin-web}
+    ports:
+      - "127.0.0.1:5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:${MARGIN_REDIS_HOST_PORT:-16379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:RELEASE.2024-07-04T14-25-45Z
+    command: server /data --console-address ":9001"
+    env_file:
+      - ../.env
+    ports:
+      - "127.0.0.1:${MINIO_HOST_PORT:-19000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-19001}:9001"
+    volumes:
+      - minio-data:/data
+
+  object-store-init:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile.object-store-init
+    restart: on-failure
+    env_file:
+      - ../.env
+    environment:
+      MARGIN_ENV: local
+      MARGIN_AUTH_HEADER_FALLBACK: ${MARGIN_COMPOSE_AUTH_HEADER_FALLBACK:-true}
+      MARGIN_AUTH_DEPLOYMENT_PROFILE: ${MARGIN_COMPOSE_AUTH_DEPLOYMENT_PROFILE:-external_oidc}
+      MARGIN_KEYCLOAK_PROFILE_ENABLED: ${MARGIN_COMPOSE_KEYCLOAK_PROFILE_ENABLED:-false}
+      MARGIN_OIDC_ISSUER_URL: ${MARGIN_COMPOSE_OIDC_ISSUER_URL:-}
+      MARGIN_OIDC_JWKS_URL: ${MARGIN_COMPOSE_OIDC_JWKS_URL:-}
+      MARGIN_OIDC_VERIFY_SIGNATURE: ${MARGIN_COMPOSE_OIDC_VERIFY_SIGNATURE:-false}
+    depends_on:
+      minio:
+        condition: service_started
+
+  keycloak:
+    profiles: ["auth"]
+    # Keycloak 26 is the first release line that supports PostgreSQL 18, and it
+    # replaces the removed KEYCLOAK_ADMIN variables with the bootstrap ones.
+    image: quay.io/keycloak/keycloak:26.8
+    command: start-dev --import-realm
+    env_file:
+      - ../.env
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-change-me-keycloak}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${KEYCLOAK_POSTGRES_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-margin}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-margin}
+      KC_HTTP_PORT: 8080
+      KC_HOSTNAME: ${KEYCLOAK_PUBLIC_URL:-http://localhost:8082}
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "127.0.0.1:8082:8080"
+    volumes:
+      - ./keycloak/margin-realm.json:/opt/keycloak/data/import/margin-realm.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  minio-data:
+  model-cache:

@@ -1,0 +1,5 @@
+id: dom_customer_platform
+name: Customer Platform
+category: Design Document
+owner: architecture-team
+description: Sample domain used to prove the fixture layout.

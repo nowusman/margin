@@ -1,0 +1,28 @@
+version: 1
+terms:
+  - preferred_term: BSS
+    aliases:
+      - Business Support Systems
+    narrower_terms:
+      - CRM
+      - Billing
+    related_terms:
+      - OSS
+    steward: bss-architecture
+  - preferred_term: OSS
+    aliases:
+      - Operations Support Systems
+    deprecated_terms:
+      - Ops Support Systems
+    broader_terms:
+      - Enterprise Architecture
+    related_terms:
+      - NSS
+    steward: oss-architecture
+  - preferred_term: Fixed Network
+    aliases:
+      - Fixed Access Network
+      - Fixed Line Network
+    related_terms:
+      - INFRA
+    steward: fixed-network-architecture

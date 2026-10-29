@@ -1,0 +1,44 @@
+{
+  "name": "margin-web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format:check": "prettier --check . ../../README.md ../../docs/**/*.md ../../tests/**/*.md ../../infra/**/*.md",
+    "markdown:check": "markdownlint-cli2 \"../../README.md\" \"../../docs/**/*.md\" \"../../tests/**/*.md\" \"../../infra/**/*.md\"",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:acceptance": "playwright test src/tests/e2e/playwright/frontend-governance-workflows.spec.ts src/tests/e2e/playwright/frontend-knowledge-workflows.spec.ts",
+    "test:e2e:a11y": "playwright test --grep @a11y",
+    "test:e2e:perf": "playwright test --grep @perf"
+  },
+  "dependencies": {
+    "echarts": "^5.5.1",
+    "katex": "^0.16.47",
+    "mermaid": "^11.4.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.6.0",
+    "@playwright/test": "1.55.0",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@typescript-eslint/parser": "8.36.0",
+    "@vitejs/plugin-react": "4.3.1",
+    "eslint": "9.6.0",
+    "markdownlint-cli2": "0.22.1",
+    "prettier": "3.3.3",
+    "typescript": "5.5.3",
+    "vite": "5.4.21",
+    "vitest": "2.1.9"
+  }
+}

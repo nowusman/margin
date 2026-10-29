@@ -1,0 +1,3 @@
+Margin source ingestion note.
+
+This text fixture exercises the deterministic fallback converter.

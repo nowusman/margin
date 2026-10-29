@@ -1,0 +1,5 @@
+@startuml
+actor User
+User -> "Margin API": upload source
+"Margin API" -> PostgreSQL: persist source document
+@enduml

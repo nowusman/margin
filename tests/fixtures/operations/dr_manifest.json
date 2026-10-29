@@ -1,0 +1,7 @@
+{
+  "postgres_backup_id": "pgbasebackup-2026-05-16T18:00:00Z",
+  "object_storage_snapshot": "minio-snapshot-2026-05-16T18:00:00Z",
+  "rpo_minutes": 10,
+  "rto_minutes": 90,
+  "smoke_tests_passed": true
+}

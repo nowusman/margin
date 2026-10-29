@@ -1,0 +1,25 @@
+asyncapi: 2.6.0
+info:
+  title: Customer Events
+  version: 1.0.0
+channels:
+  customer.created:
+    publish:
+      operationId: publishCustomerCreated
+      message:
+        $ref: "#/components/messages/CustomerCreated"
+    subscribe:
+      operationId: consumeCustomerCreated
+      message:
+        $ref: "#/components/messages/CustomerCreated"
+components:
+  messages:
+    CustomerCreated:
+      payload:
+        $ref: "#/components/schemas/CustomerCreatedPayload"
+  schemas:
+    CustomerCreatedPayload:
+      type: object
+      properties:
+        customerId:
+          type: string

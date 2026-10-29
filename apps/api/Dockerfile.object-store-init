@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.7
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY apps/api/requirements-object-store-init.txt /app/apps/api/requirements-object-store-init.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install --timeout 300 --retries 10 --no-compile -r /app/apps/api/requirements-object-store-init.txt
+
+COPY apps/api/app /app/apps/api/app
+COPY packages/margin_db /app/packages/margin_db
+COPY packages/margin_schema /app/packages/margin_schema
+
+ENV PYTHONPATH=/app/apps/api:/app/packages/margin_db:/app/packages/margin_schema
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+CMD ["python", "-m", "app.cli", "ensure-object-store-bucket"]

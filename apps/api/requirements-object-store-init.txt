@@ -1,0 +1,6 @@
+pydantic-settings==2.3.4
+sqlalchemy==2.0.44
+psycopg[binary]==3.2.13
+pgvector==0.3.6
+boto3==1.35.25
+PyYAML==6.0.3

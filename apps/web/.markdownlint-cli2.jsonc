@@ -1,0 +1,15 @@
+{
+  "config": {
+    "MD013": false,
+    "MD024": {
+      "siblings_only": true
+    },
+    "MD060": false
+  },
+  "ignores": [
+    "../../AGENTS.md",
+    "../../MARGIN_Implementation_Plan.md",
+    "../../node_modules/**",
+    "node_modules/**"
+  ]
+}

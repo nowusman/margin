@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: Customer Onboarding API
+  version: 1.2.0
+paths:
+  /customers:
+    post:
+      operationId: createCustomer
+      summary: Create a customer profile
+      tags: [customer]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomerRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+components:
+  schemas:
+    CreateCustomerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string

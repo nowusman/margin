@@ -1,0 +1,5 @@
+version: 1
+policy:
+  llm_model_execution: admin_settings_only
+  retrieval_model_execution: local_runtime_environment
+models: []

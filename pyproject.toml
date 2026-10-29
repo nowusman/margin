@@ -1,0 +1,77 @@
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests", "tests"]
+addopts = ["--import-mode=importlib"]
+pythonpath = [".", "apps/api", "apps/mcp", "packages/margin_auth", "packages/margin_db", "packages/margin_schema", "packages/margin_embedding", "packages/margin_graph", "packages/margin_agent", "packages/margin_retrieval", "packages/margin_eval", "packages/margin_ingest", "packages/margin_inference"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "node_modules",
+]
+
+[tool.black]
+line-length = 120
+# Black's magic trailing comma keeps an import exploded even when it fits on one
+# line, which isort would collapse. The two tools are configured to agree.
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = [
+    "app",
+    "workers",
+    "margin_mcp",
+    "margin_auth",
+    "margin_db",
+    "margin_schema",
+    "margin_embedding",
+    "margin_graph",
+    "margin_agent",
+    "margin_retrieval",
+    "margin_eval",
+    "margin_ingest",
+    "margin_inference",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+combine_as_imports = true
+known_first_party = [
+    "app",
+    "workers",
+    "margin_mcp",
+    "margin_auth",
+    "margin_db",
+    "margin_schema",
+    "margin_embedding",
+    "margin_graph",
+    "margin_agent",
+    "margin_retrieval",
+    "margin_eval",
+    "margin_ingest",
+    "margin_inference",
+]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+explicit_package_bases = true
+exclude = []
+
+[tool.markdownlint]
+default = true
+MD013 = false

@@ -1,0 +1,2970 @@
+{
+  "version": "margin-knowledge-gold-v3",
+  "fixtures": [
+    {
+      "fixture_id": "adr_postgres",
+      "class": "adr",
+      "path": "tests/fixtures/extraction_calibration/adr_postgresql.md",
+      "domain_id": "platform",
+      "category": "adr",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Use PostgreSQL as the operational system of record"
+      ],
+      "claims": [
+        {
+          "id": "adr_postgres_main",
+          "statement": "Use PostgreSQL as the operational system of record.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "Use PostgreSQL as the operational system of record",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "architecture_principle_versioned_apis",
+      "class": "architecture_principle",
+      "path": "tests/fixtures/gold_corpus/architecture_principles.md",
+      "domain_id": "platform",
+      "category": "principle",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "All customer capabilities must expose versioned APIs"
+      ],
+      "claims": [
+        {
+          "id": "principle_versioned_apis",
+          "statement": "All customer capabilities must expose versioned APIs.",
+          "type": "principle",
+          "evidence": [
+            {
+              "quote": "All customer capabilities must expose versioned APIs",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "risk_register_stale_docs",
+      "class": "risk_register",
+      "path": "tests/fixtures/extraction_calibration/risk_register.md",
+      "domain_id": "platform",
+      "category": "risk",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Stale architecture documents",
+        "Review source spans every quarter"
+      ],
+      "claims": [
+        {
+          "id": "risk_stale_architecture",
+          "statement": "Stale architecture documents are a primary risk.",
+          "type": "risk",
+          "evidence": [
+            {
+              "quote": "Stale architecture documents",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "risk_review_spans_quarterly",
+          "statement": "Review source spans every quarter.",
+          "type": "risk_mitigation",
+          "evidence": [
+            {
+              "quote": "Review source spans every quarter",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "no_claim_elements": [
+        {
+          "element_id": "el-risk-mitigation-empty",
+          "verification_method": "section_level_residual",
+          "verifier_version": "v1"
+        }
+      ]
+    },
+    {
+      "fixture_id": "ownership_matrix",
+      "class": "ownership_matrix",
+      "path": "tests/fixtures/gold_corpus/ownership_matrix.md",
+      "domain_id": "platform",
+      "category": "ownership",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Customer Platform",
+        "Platform Team",
+        "Billing API",
+        "Revenue Engineering"
+      ],
+      "entities": [
+        {
+          "name": "Customer Platform",
+          "kind": "system"
+        },
+        {
+          "name": "Platform Team",
+          "kind": "team"
+        },
+        {
+          "name": "Billing API",
+          "kind": "api"
+        },
+        {
+          "name": "Revenue Engineering",
+          "kind": "team"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "platform_owned_by_platform_team",
+          "source": "Customer Platform",
+          "target": "Platform Team",
+          "type": "owned_by",
+          "evidence": {
+            "quote": "| Customer Platform | Platform Team       | active |"
+          }
+        },
+        {
+          "id": "billing_api_owned_by_revenue_engineering",
+          "source": "Billing API",
+          "target": "Revenue Engineering",
+          "type": "owned_by",
+          "evidence": {
+            "quote": "| Billing API       | Revenue Engineering | active |"
+          }
+        }
+      ]
+    },
+    {
+      "fixture_id": "interface_matrix",
+      "class": "interface_catalog",
+      "path": "tests/fixtures/extraction_calibration/interface_matrix.md",
+      "domain_id": "platform",
+      "category": "interface",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Web Channel calls Onboarding API",
+        "CRM consumes Customer Events"
+      ],
+      "relationships": [
+        {
+          "id": "web_channel_calls_onboarding",
+          "source": "Web Channel",
+          "target": "Onboarding API",
+          "type": "calls",
+          "evidence": {
+            "quote": "Web Channel calls Onboarding API"
+          }
+        },
+        {
+          "id": "crm_consumes_events",
+          "source": "CRM",
+          "target": "Customer Events",
+          "type": "consumes",
+          "evidence": {
+            "quote": "CRM consumes Customer Events"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "name": "Web Channel",
+          "kind": "component"
+        },
+        {
+          "name": "Onboarding API",
+          "kind": "api"
+        },
+        {
+          "name": "CRM",
+          "kind": "component"
+        },
+        {
+          "name": "Customer Events",
+          "kind": "event"
+        }
+      ]
+    },
+    {
+      "fixture_id": "openapi_customer_onboarding",
+      "class": "openapi_contract",
+      "path": "tests/fixtures/source_ingestion/service.openapi.yaml",
+      "domain_id": "platform",
+      "category": "openapi",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Customer Onboarding API",
+        "createCustomer",
+        "CreateCustomerRequest"
+      ],
+      "fields": [
+        {
+          "path": "info.title",
+          "expected_value": "Customer Onboarding API"
+        },
+        {
+          "path": "paths./customers.post.operationId",
+          "expected_value": "createCustomer"
+        }
+      ]
+    },
+    {
+      "fixture_id": "event_contract_customer_created",
+      "class": "event_contract",
+      "path": "tests/fixtures/source_ingestion/events.asyncapi.yaml",
+      "domain_id": "platform",
+      "category": "asyncapi",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "customer.created",
+        "CustomerCreated",
+        "CustomerCreatedPayload"
+      ],
+      "fields": [
+        {
+          "path": "channels.customerCreated.address",
+          "expected_value": "customer.created"
+        },
+        {
+          "path": "components.messages.CustomerCreated.name",
+          "expected_value": "CustomerCreated"
+        }
+      ]
+    },
+    {
+      "fixture_id": "structurizr_diagram",
+      "class": "structurizr_diagram",
+      "path": "tests/fixtures/source_ingestion/system.dsl",
+      "domain_id": "platform",
+      "category": "diagram",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Customer Platform"
+      ],
+      "entities": [
+        {
+          "name": "Customer Platform",
+          "kind": "system"
+        }
+      ]
+    },
+    {
+      "fixture_id": "mermaid_flow_diagram",
+      "class": "mermaid_diagram",
+      "path": "tests/fixtures/source_ingestion/flow.mmd",
+      "domain_id": "platform",
+      "category": "diagram",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Portal",
+        "API",
+        "Events"
+      ]
+    },
+    {
+      "fixture_id": "plantuml_deployment_diagram",
+      "class": "plantuml_diagram",
+      "path": "tests/fixtures/source_ingestion/deployment.puml",
+      "domain_id": "platform",
+      "category": "diagram",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "User",
+        "Margin API",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "fixture_id": "pdf_tables_images",
+      "class": "pdf_tables_images",
+      "path": "tests/fixtures/source_ingestion/minimal.pdf",
+      "domain_id": "platform",
+      "category": "pdf",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "PDF conversion must account for pages, tables, and images"
+      ]
+    },
+    {
+      "fixture_id": "customer_platform_v1",
+      "class": "contradictory_versioned",
+      "path": "tests/fixtures/gold_corpus/customer-platform-v1.md",
+      "domain_id": "platform",
+      "category": "architecture",
+      "sensitivity": "internal",
+      "version_group": "customer-platform",
+      "version": 1,
+      "expected_assertions": [
+        "Customer Platform depends on PostgreSQL"
+      ],
+      "claims": [
+        {
+          "id": "v1_depends_on_postgres",
+          "statement": "Customer Platform depends on PostgreSQL.",
+          "type": "depends_on",
+          "evidence": [
+            {
+              "quote": "Customer Platform depends on PostgreSQL",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "v1_depends_on_postgres_rel",
+          "source": "Customer Platform",
+          "target": "PostgreSQL",
+          "type": "depends_on",
+          "evidence": {
+            "quote": "Customer Platform depends on PostgreSQL"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "name": "Customer Platform",
+          "kind": "system"
+        },
+        {
+          "name": "PostgreSQL",
+          "kind": "technology"
+        }
+      ]
+    },
+    {
+      "fixture_id": "customer_platform_v2",
+      "class": "contradictory_versioned",
+      "path": "tests/fixtures/gold_corpus/customer-platform-v2.md",
+      "domain_id": "platform",
+      "category": "architecture",
+      "sensitivity": "internal",
+      "version_group": "customer-platform",
+      "version": 2,
+      "supersedes": [
+        "customer_platform_v1"
+      ],
+      "expected_assertions": [
+        "Customer Platform does not depend on PostgreSQL"
+      ],
+      "claims": [
+        {
+          "id": "v2_does_not_depend_on_postgres",
+          "statement": "Customer Platform does not depend on PostgreSQL.",
+          "type": "depends_on",
+          "polarity": "refutes",
+          "evidence": [
+            {
+              "quote": "Customer Platform does not depend on PostgreSQL",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "depends_postgres",
+          "source": "Customer Platform",
+          "target": "PostgreSQL",
+          "type": "depends_on",
+          "polarity": "refutes",
+          "evidence": {
+            "quote": "Customer Platform does not depend on PostgreSQL"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "name": "Customer Platform",
+          "kind": "system"
+        },
+        {
+          "name": "PostgreSQL",
+          "kind": "technology"
+        }
+      ]
+    },
+    {
+      "fixture_id": "arabic_mixed_script_entities",
+      "class": "unicode_entities",
+      "path": "tests/fixtures/gold_corpus/arabic_mixed_script_entities.md",
+      "domain_id": "platform",
+      "category": "unicode",
+      "sensitivity": "internal",
+      "evaluation_mode": "deterministic",
+      "expected_assertions": [
+        "Arabic entities keep distinct identities",
+        "Mixed-script aliases are preserved"
+      ],
+      "entities": [
+        {
+          "name": "نظام الدفع",
+          "kind": "system",
+          "external_id": "ar:payment-system",
+          "aliases": [
+            "Payment System"
+          ]
+        },
+        {
+          "name": "بوابة الدفع",
+          "kind": "system",
+          "external_id": "ar:payment-gateway",
+          "aliases": [
+            "Payment Gateway"
+          ]
+        },
+        {
+          "name": "Платёжная система",
+          "kind": "system",
+          "external_id": "cyrillic:payment-system"
+        },
+        {
+          "name": "订单支付",
+          "kind": "system",
+          "external_id": "cjk:payment"
+        },
+        {
+          "name": "API بوابة-v2",
+          "kind": "service",
+          "external_id": "mixed:payment-gateway-v2"
+        }
+      ],
+      "claims": [
+        {
+          "id": "arabic_dependency",
+          "statement": "نظام الدفع يعتمد على بوابة الدفع.",
+          "type": "depends_on",
+          "evidence": [
+            {
+              "quote": "نظام الدفع يعتمد على بوابة الدفع",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "cross_domain_isolated_source_finance",
+      "class": "cross_domain_isolation",
+      "path": "tests/fixtures/gold_corpus/cross_domain_isolated_source.md",
+      "domain_id": "finance",
+      "category": "duplicate",
+      "sensitivity": "confidential",
+      "source_uri": "internal://finance/customer-profile.md",
+      "expected_assertions": [
+        "Identical bytes into a second domain remain independent"
+      ],
+      "claims": [
+        {
+          "id": "finance_owner",
+          "statement": "The Finance domain holds the authoritative copy of the customer profile data.",
+          "type": "ownership",
+          "evidence": [
+            {
+              "quote": "Finance domain holds the authoritative copy",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "cross_domain_isolated_source_sales",
+      "class": "cross_domain_isolation",
+      "path": "tests/fixtures/gold_corpus/cross_domain_isolated_source.md",
+      "domain_id": "sales",
+      "category": "duplicate",
+      "sensitivity": "internal",
+      "source_uri": "internal://sales/customer-profile.md",
+      "expected_assertions": [
+        "Identical bytes into a second domain remain independent"
+      ],
+      "claims": [
+        {
+          "id": "sales_owner",
+          "statement": "The Sales domain holds an independent copy of the customer profile data.",
+          "type": "ownership",
+          "evidence": [
+            {
+              "quote": "Sales domain holds an independent copy",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "heading_body_multi_span",
+      "class": "multi_span_claim",
+      "path": "tests/fixtures/gold_corpus/heading_body_multi_span.md",
+      "domain_id": "platform",
+      "category": "service",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Heading subject plus body predicate forms one claim"
+      ],
+      "claims": [
+        {
+          "id": "order_service_owner_in_heading",
+          "statement": "Order Service is owned by the Platform Team.",
+          "type": "ownership",
+          "evidence": [
+            {
+              "quote": "Order Service",
+              "kind": "heading"
+            },
+            {
+              "quote": "is owned by the Platform Team",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "order_service_depends_on_postgres",
+          "statement": "Order Service depends on PostgreSQL for transactional storage.",
+          "type": "depends_on",
+          "evidence": [
+            {
+              "quote": "Order Service",
+              "kind": "heading"
+            },
+            {
+              "quote": "Depends on PostgreSQL for transactional storage",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "multi_paragraph_decision",
+      "class": "adr",
+      "path": "tests/fixtures/gold_corpus/multi_paragraph_decision.md",
+      "domain_id": "platform",
+      "category": "adr",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Title",
+        "Context",
+        "Decision",
+        "Consequences",
+        "Supersession"
+      ],
+      "fields": [
+        {
+          "path": "context",
+          "expected_value": "Auditability of every change is required by the Revenue Engineering team."
+        },
+        {
+          "path": "decision",
+          "expected_value": "We will adopt event sourcing for the Billing capability."
+        },
+        {
+          "path": "consequences",
+          "expected_value": "Reconciliation tooling must be built before the next billing cycle."
+        },
+        {
+          "path": "supersedes",
+          "expected_value": "ADR-0001"
+        }
+      ],
+      "claims": [
+        {
+          "id": "decision_event_sourcing",
+          "statement": "We will adopt event sourcing for the Billing capability.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "We will adopt event sourcing for the Billing capability",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "table_figure_ocr_anchors",
+      "class": "structured_evidence",
+      "path": "tests/fixtures/gold_corpus/table_figure_ocr_anchors.md",
+      "domain_id": "platform",
+      "category": "mixed",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Caption",
+        "Header",
+        "Row",
+        "Diagram",
+        "OCR page"
+      ],
+      "claims": [
+        {
+          "id": "billing_owns_table",
+          "statement": "The Billing API is owned by Revenue Engineering.",
+          "type": "ownership",
+          "evidence": [
+            {
+              "quote": "Service Ownership Matrix",
+              "kind": "caption"
+            },
+            {
+              "quote": "Billing API",
+              "kind": "table_header"
+            },
+            {
+              "quote": "Revenue Engineering",
+              "kind": "table_row"
+            }
+          ]
+        },
+        {
+          "id": "figure_billing_ledger",
+          "statement": "The Billing API publishes a CustomerBilled event to the Ledger service.",
+          "type": "publishes",
+          "evidence": [
+            {
+              "quote": "Figure 1: Billing API",
+              "kind": "figure_caption"
+            },
+            {
+              "quote": "publishes a CustomerBilled event",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "long_ocr_pdf",
+      "class": "scanned_pdf_pages",
+      "path": "tests/fixtures/source_ingestion/minimal.pdf",
+      "domain_id": "platform",
+      "category": "ocr",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Page 1",
+        "Page 2",
+        "Page 3"
+      ],
+      "claims": [
+        {
+          "id": "ocr_page1_subscription",
+          "statement": "Initial subscription agreement between the customer and the platform.",
+          "type": "contract",
+          "evidence": [
+            {
+              "quote": "Initial subscription agreement",
+              "kind": "ocr",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "ocr_page2_amount",
+          "statement": "The customer agrees to recurring monthly billing of forty-nine dollars.",
+          "type": "contract",
+          "evidence": [
+            {
+              "quote": "forty-nine dollars",
+              "kind": "ocr",
+              "page_number": 2
+            }
+          ]
+        },
+        {
+          "id": "ocr_page3_cancellation",
+          "statement": "Cancellations must be received seven days before the renewal date.",
+          "type": "contract",
+          "evidence": [
+            {
+              "quote": "Cancellations must be received seven days",
+              "kind": "ocr",
+              "page_number": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "numeric_versioned_duplicates",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/numeric_versioned_duplicates.md",
+      "domain_id": "platform",
+      "category": "duplicates",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Numeric difference",
+        "Version difference",
+        "Negation difference",
+        "Exception difference",
+        "Exact duplicate"
+      ],
+      "claims": [
+        {
+          "id": "api_v1_ten_retries",
+          "statement": "The API v1 allows 10 retries.",
+          "type": "limit",
+          "evidence": [
+            {
+              "quote": "API v1 allows 10 retries",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "api_v2_three_retries",
+          "statement": "The API v2 allows 3 retries.",
+          "type": "limit",
+          "evidence": [
+            {
+              "quote": "API v2 allows 3 retries",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "api_v2_no_retries",
+          "statement": "The API v2 does not allow retries.",
+          "type": "limit",
+          "polarity": "refutes",
+          "evidence": [
+            {
+              "quote": "API v2 does not allow retries",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "api_v2_except_payments",
+          "statement": "The API v2 allows retries except for payments.",
+          "type": "limit",
+          "evidence": [
+            {
+              "quote": "API v2 allows retries except for payments",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "api_v2_three_retries_dup",
+          "statement": "The API v2 allows 3 retries.",
+          "type": "limit",
+          "evidence": [
+            {
+              "quote": "API v2 allows 3 retries",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "relationship_temporal_states",
+      "class": "relationship_temporal",
+      "path": "tests/fixtures/gold_corpus/relationship_temporal_states.md",
+      "domain_id": "platform",
+      "category": "relationships",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Positive",
+        "Negated",
+        "Expired",
+        "Superseded"
+      ],
+      "claims": [
+        {
+          "id": "owns_billing_api_active",
+          "statement": "The Customer Platform owns the Billing API.",
+          "type": "ownership",
+          "evidence": [
+            {
+              "quote": "Customer Platform owns the Billing API",
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "not_own_legacy_billing",
+          "statement": "The Customer Platform does not own the Legacy Billing API.",
+          "type": "ownership",
+          "polarity": "refutes",
+          "evidence": [
+            {
+              "quote": "Customer Platform does not own the Legacy Billing API",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "owns_billing_api",
+          "source": "Customer Platform",
+          "target": "Billing API",
+          "type": "owns",
+          "evidence": {
+            "quote": "The Customer Platform owns the Billing API"
+          }
+        },
+        {
+          "id": "does_not_own_legacy_billing_api",
+          "source": "Customer Platform",
+          "target": "Legacy Billing API",
+          "type": "owns",
+          "polarity": "refutes",
+          "evidence": {
+            "quote": "The Customer Platform does not own the Legacy Billing API"
+          }
+        },
+        {
+          "id": "owned_legacy_billing_api_2020_2023",
+          "source": "Customer Platform",
+          "target": "Legacy Billing API",
+          "type": "owns",
+          "temporal_group": "legacy_billing_api_ownership",
+          "valid_from": "2020-01-01",
+          "valid_to": "2023-12-31",
+          "evidence": {
+            "quote": "The Customer Platform owned the Legacy Billing API from 2020 to 2023"
+          }
+        },
+        {
+          "id": "owns_billing_api_after_2024",
+          "source": "Customer Platform",
+          "target": "Billing API",
+          "type": "owns",
+          "temporal_group": "billing_api_ownership",
+          "valid_from": "2024-01-01",
+          "evidence": {
+            "quote": "The Customer Platform owns the Billing API after 2024"
+          }
+        }
+      ]
+    },
+    {
+      "fixture_id": "reprocessing_deletion_lifecycle",
+      "class": "lifecycle_reprocessing_deletion",
+      "path": "tests/fixtures/gold_corpus/reprocessing_deletion_lifecycle.md",
+      "domain_id": "platform",
+      "category": "lifecycle",
+      "sensitivity": "internal",
+      "evaluation_mode": "operational",
+      "expected_assertions": [
+        "Reprocessing produces a new version",
+        "Deletion removes all derived records"
+      ],
+      "claims": [
+        {
+          "id": "lifecycle_dependency",
+          "statement": "The Customer Platform depends on PostgreSQL for transactional storage.",
+          "type": "depends_on",
+          "evidence": [
+            {
+              "quote": "Customer Platform depends on PostgreSQL",
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "lifecycle_depends_on_postgres",
+          "source": "Customer Platform",
+          "target": "PostgreSQL",
+          "type": "depends_on",
+          "evidence": {
+            "quote": "Customer Platform depends on PostgreSQL"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "name": "Customer Platform",
+          "kind": "system"
+        },
+        {
+          "name": "PostgreSQL",
+          "kind": "technology"
+        }
+      ]
+    },
+    {
+      "fixture_id": "docx_document_conversion",
+      "class": "pdf_tables_images",
+      "path": "tests/fixtures/source_ingestion/minimal.docx",
+      "domain_id": "platform",
+      "category": "specification",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Native DOCX document conversion preserves document structure and paragraphs"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "docx-el-01",
+          "kind": "paragraph",
+          "text": "Minimal docx content"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Minimal docx",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "docx_conversion_claim",
+          "statement": "Native DOCX document conversion preserves document structure and paragraphs.",
+          "type": "standard",
+          "evidence": [
+            {
+              "quote": "Minimal docx",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "DOCX",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-docx-parser"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "docx_conversion_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "docx conversion structure",
+        "top_result_id": "docx_document_conversion::docx_conversion_claim"
+      },
+      "citations": [
+        {
+          "source": "minimal.docx",
+          "page": 1,
+          "quote": "Minimal docx"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pptx_presentation_slides",
+      "class": "pdf_tables_images",
+      "path": "tests/fixtures/source_ingestion/minimal.pptx",
+      "domain_id": "platform",
+      "category": "presentation",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Presentation slides maintain shape and slide level ordering"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "pptx-el-01",
+          "kind": "slide_shape",
+          "text": "Minimal presentation"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Minimal presentation",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "pptx_slides_claim",
+          "statement": "Presentation slides maintain shape and slide level ordering.",
+          "type": "standard",
+          "evidence": [
+            {
+              "quote": "Minimal presentation",
+              "kind": "slide",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "PPTX",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-pptx-parser"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "pptx_slides_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "presentation slide ordering",
+        "top_result_id": "pptx_presentation_slides::pptx_slides_claim"
+      },
+      "citations": [
+        {
+          "source": "minimal.pptx",
+          "page": 1,
+          "quote": "Minimal presentation"
+        }
+      ]
+    },
+    {
+      "fixture_id": "architecture_specification_source_ingestion",
+      "class": "architecture_principle",
+      "path": "tests/fixtures/source_ingestion/architecture.md",
+      "domain_id": "platform",
+      "category": "architecture_doc",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "System architecture defines service components and boundary constraints"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "arch-el-01",
+          "kind": "heading",
+          "text": "System Architecture"
+        },
+        {
+          "element_id": "arch-el-02",
+          "kind": "paragraph",
+          "text": "Architecture constraints"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "System Architecture",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "arch_spec_claim",
+          "statement": "System architecture defines service components and boundary constraints.",
+          "type": "principle",
+          "evidence": [
+            {
+              "quote": "System Architecture",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Architecture",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-architecture"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "arch_spec_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 1,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "architecture specification boundaries",
+        "top_result_id": "architecture_specification_source_ingestion::arch_spec_claim"
+      },
+      "citations": [
+        {
+          "source": "architecture.md",
+          "page": 1,
+          "quote": "System Architecture"
+        }
+      ]
+    },
+    {
+      "fixture_id": "plain_text_field_notes",
+      "class": "architecture_principle",
+      "path": "tests/fixtures/source_ingestion/note.txt",
+      "domain_id": "platform",
+      "category": "notes",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Unpaginated plain text files map to a single logical page"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "note-el-01",
+          "kind": "text_block",
+          "text": "Plain text note"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "note",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "plain_text_note_claim",
+          "statement": "Unpaginated plain text files map to a single logical page.",
+          "type": "standard",
+          "evidence": [
+            {
+              "quote": "note",
+              "kind": "text",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [],
+      "semantic_decisions": [
+        {
+          "candidate_id": "plain_text_note_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "unpaginated plain text note",
+        "top_result_id": "plain_text_field_notes::plain_text_note_claim"
+      },
+      "citations": [
+        {
+          "source": "note.txt",
+          "page": 1,
+          "quote": "note"
+        }
+      ]
+    },
+    {
+      "fixture_id": "mixed_ocr_native_scanned",
+      "class": "scanned_pdf_pages",
+      "path": "tests/fixtures/gold_corpus/mixed_ocr_document.md",
+      "domain_id": "platform",
+      "category": "specification",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Mixed OCR processing preserves native pages and table elements without dropping native content"
+      ],
+      "expected_pages": 3,
+      "expected_elements": [
+        {
+          "element_id": "mixed-p1-el1",
+          "page": 1,
+          "kind": "paragraph",
+          "text": "event-driven event backbone"
+        },
+        {
+          "element_id": "mixed-p2-el1",
+          "page": 2,
+          "kind": "table",
+          "text": "Payment Gateway | 50% failures",
+          "bbox": [
+            45,
+            120,
+            520,
+            480
+          ]
+        },
+        {
+          "element_id": "mixed-p3-el1",
+          "page": 3,
+          "kind": "paragraph",
+          "text": "rate limit of 1000 requests per second"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "event-driven event backbone",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "Payment Gateway",
+          "page_number": 2,
+          "kind": "verbatim",
+          "bbox": [
+            45,
+            120,
+            520,
+            480
+          ]
+        },
+        {
+          "quote": "rate limit of 1000 requests per second",
+          "page_number": 3,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "mixed_ocr_native_p1",
+          "statement": "The platform architecture utilizes an event-driven event backbone.",
+          "type": "architecture_standard",
+          "evidence": [
+            {
+              "quote": "event-driven event backbone",
+              "page_number": 1,
+              "kind": "paragraph"
+            }
+          ]
+        },
+        {
+          "id": "mixed_ocr_scanned_p2",
+          "statement": "Payment gateway circuit breaker trips at fifty percent failure rate.",
+          "type": "resilience_standard",
+          "evidence": [
+            {
+              "quote": "Payment Gateway",
+              "page_number": 2,
+              "kind": "table"
+            }
+          ]
+        },
+        {
+          "id": "mixed_ocr_native_p3",
+          "statement": "All ingress gateways must enforce an upstream rate limit of 1000 requests per second.",
+          "type": "security_standard",
+          "evidence": [
+            {
+              "quote": "rate limit of 1000 requests per second",
+              "page_number": 3,
+              "kind": "paragraph"
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Payment Gateway",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-payment-gw"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "mixed_ocr_native_p1",
+          "decision": "distinct"
+        },
+        {
+          "candidate_id": "mixed_ocr_scanned_p2",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 1,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "circuit breaker payment gateway failure",
+        "top_result_id": "mixed_ocr_native_scanned::mixed_ocr_scanned_p2"
+      },
+      "citations": [
+        {
+          "source": "mixed_ocr_document.md",
+          "page": 2,
+          "quote": "Payment Gateway"
+        }
+      ]
+    },
+    {
+      "fixture_id": "standalone_image_topology",
+      "class": "structured_evidence",
+      "path": "tests/fixtures/gold_corpus/standalone_image_architecture.md",
+      "domain_id": "platform",
+      "category": "diagram",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Standalone architecture diagrams extract visual elements with layout coordinates"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "img-topo-01",
+          "kind": "image_crop",
+          "asset_key": "obj-topo-diagram-01",
+          "bbox": [
+            50,
+            80,
+            700,
+            500
+          ]
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Edge Proxy terminates TLS and forwards validated requests",
+          "page_number": 1,
+          "kind": "derived_visual"
+        }
+      ],
+      "claims": [
+        {
+          "id": "standalone_img_edge_claim",
+          "statement": "The Edge Proxy terminates TLS and forwards validated requests to the Customer Platform.",
+          "type": "topology",
+          "evidence": [
+            {
+              "quote": "Edge Proxy terminates TLS and forwards validated requests",
+              "kind": "derived_visual",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Edge Proxy",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-edge-proxy"
+        },
+        {
+          "term": "Customer Platform",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-customer-platform"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "standalone_img_edge_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "edge proxy tls termination",
+        "top_result_id": "standalone_image_topology::standalone_img_edge_claim"
+      },
+      "citations": [
+        {
+          "source": "standalone_image_architecture.md",
+          "page": 1,
+          "quote": "Edge Proxy terminates TLS"
+        }
+      ]
+    },
+    {
+      "fixture_id": "chart_metric_benchmarks",
+      "class": "structured_evidence",
+      "path": "tests/fixtures/gold_corpus/chart_metric_performance.md",
+      "domain_id": "platform",
+      "category": "benchmark",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Chart extractions record derived visual evidence with tabular backing data"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "chart-el-01",
+          "kind": "chart",
+          "bbox": [
+            60,
+            100,
+            650,
+            420
+          ],
+          "asset_key": "chart-p99-latency"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "API gateway P99 latency remains under 500 milliseconds up to 5000 concurrent clients",
+          "page_number": 1,
+          "kind": "derived_visual"
+        }
+      ],
+      "claims": [
+        {
+          "id": "chart_latency_claim",
+          "statement": "API gateway P99 latency remains under 500 milliseconds up to 5000 concurrent clients.",
+          "type": "performance_metric",
+          "evidence": [
+            {
+              "quote": "API gateway P99 latency remains under 500 milliseconds up to 5000 concurrent clients",
+              "kind": "derived_visual",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "API Gateway",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-api-gateway"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "chart_latency_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "api gateway p99 latency 5000 concurrency",
+        "top_result_id": "chart_metric_benchmarks::chart_latency_claim"
+      },
+      "citations": [
+        {
+          "source": "chart_metric_performance.md",
+          "page": 1,
+          "quote": "API gateway P99 latency"
+        }
+      ]
+    },
+    {
+      "fixture_id": "screenshot_security_console",
+      "class": "structured_evidence",
+      "path": "tests/fixtures/gold_corpus/screenshot_ui_settings.md",
+      "domain_id": "platform",
+      "category": "security_manual",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "UI screenshots preserve layout bounding boxes and OCR confidence"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "scr-el-01",
+          "kind": "screenshot",
+          "bbox": [
+            30,
+            50,
+            750,
+            550
+          ],
+          "asset_key": "ui-tenant-sec-settings"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Multi-Factor Authentication is enforced for all administrative tenant sessions",
+          "page_number": 1,
+          "kind": "derived_visual"
+        }
+      ],
+      "claims": [
+        {
+          "id": "screenshot_mfa_claim",
+          "statement": "Multi-Factor Authentication is enforced for all administrative tenant sessions.",
+          "type": "security_policy",
+          "evidence": [
+            {
+              "quote": "Multi-Factor Authentication is enforced for all administrative tenant sessions",
+              "kind": "derived_visual",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Multi-Factor Authentication",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-mfa"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "screenshot_mfa_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "administrative multi-factor authentication enforcement",
+        "top_result_id": "screenshot_security_console::screenshot_mfa_claim"
+      },
+      "citations": [
+        {
+          "source": "screenshot_ui_settings.md",
+          "page": 1,
+          "quote": "Multi-Factor Authentication"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_exact_duplicates",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_exact_duplicates.md",
+      "domain_id": "platform",
+      "category": "policy",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "All microservices must emit OpenTelemetry traces to the central collector"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "dup-el-01",
+          "kind": "paragraph",
+          "text": "All microservices must emit OpenTelemetry traces to the central collector."
+        },
+        {
+          "element_id": "dup-el-02",
+          "kind": "paragraph",
+          "text": "All microservices must emit OpenTelemetry traces to the central collector."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "All microservices must emit OpenTelemetry traces to the central collector",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "telemetry_otel_claim",
+          "statement": "All microservices must emit OpenTelemetry traces to the central collector.",
+          "type": "architecture_policy",
+          "evidence": [
+            {
+              "quote": "All microservices must emit OpenTelemetry traces to the central collector",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "OpenTelemetry",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-opentelemetry"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "telemetry_otel_claim",
+          "decision": "equivalent",
+          "action": "exact_attach",
+          "evidence_count": 2
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "opentelemetry central collector microservices",
+        "top_result_id": "pair_exact_duplicates::telemetry_otel_claim"
+      },
+      "citations": [
+        {
+          "source": "pair_exact_duplicates.md",
+          "page": 1,
+          "quote": "All microservices must emit OpenTelemetry traces"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_paraphrases",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_paraphrases.md",
+      "domain_id": "platform",
+      "category": "decision",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "PostgreSQL 16 is selected as the primary operational relational database"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "para-el-01",
+          "kind": "paragraph",
+          "text": "PostgreSQL 16 is selected as the primary operational relational database for all corporate applications."
+        },
+        {
+          "element_id": "para-el-02",
+          "kind": "paragraph",
+          "text": "The platform operational system of record is relational PostgreSQL version sixteen across every enterprise service."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "PostgreSQL 16 is selected as the primary operational relational database",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "pg16_paraphrase_a",
+          "statement": "PostgreSQL 16 is selected as the primary operational relational database.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "PostgreSQL 16 is selected as the primary operational relational database",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "PostgreSQL 16",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-postgresql"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "pg16_paraphrase_a",
+          "decision": "equivalent",
+          "guarded_review": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 1,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "primary operational relational database system of record",
+        "top_result_id": "pair_paraphrases::pg16_paraphrase_a"
+      },
+      "citations": [
+        {
+          "source": "pair_paraphrases.md",
+          "page": 1,
+          "quote": "PostgreSQL 16 is selected"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_refinements",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_refinements.md",
+      "domain_id": "platform",
+      "category": "specification",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Kafka handles inter-service event messaging across the core domain"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "ref-el-01",
+          "kind": "paragraph",
+          "text": "Kafka handles inter-service event messaging across the core domain."
+        },
+        {
+          "element_id": "ref-el-02",
+          "kind": "paragraph",
+          "text": "Kafka handles inter-service event messaging across the core domain with at-least-once delivery guarantees"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Kafka handles inter-service event messaging",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "kafka_messaging_base",
+          "statement": "Kafka handles inter-service event messaging across the core domain.",
+          "type": "standard",
+          "evidence": [
+            {
+              "quote": "Kafka handles inter-service event messaging",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "kafka_messaging_refined",
+          "statement": "Kafka handles inter-service event messaging across the core domain with at-least-once delivery guarantees, schema validation, and seven-day topic retention.",
+          "type": "standard",
+          "evidence": [
+            {
+              "quote": "Kafka handles inter-service event messaging across the core domain with at-least-once delivery guarantees",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Kafka",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-kafka"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "kafka_messaging_refined",
+          "target_id": "kafka_messaging_base",
+          "decision": "refines",
+          "separate_blocks": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "kafka inter-service event delivery guarantee",
+        "top_result_id": "pair_refinements::kafka_messaging_refined"
+      },
+      "citations": [
+        {
+          "source": "pair_refinements.md",
+          "page": 1,
+          "quote": "Kafka handles inter-service event messaging"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_negations",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_negations.md",
+      "domain_id": "platform",
+      "category": "policy",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Synchronous HTTP calls between core services are permitted during high-load periods"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "neg-el-01",
+          "kind": "paragraph",
+          "text": "Synchronous HTTP calls between core services are permitted during high-load periods."
+        },
+        {
+          "element_id": "neg-el-02",
+          "kind": "paragraph",
+          "text": "Synchronous HTTP calls between core services are strictly prohibited during high-load periods."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Synchronous HTTP calls between core services are permitted",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "Synchronous HTTP calls between core services are strictly prohibited",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "http_calls_permitted",
+          "statement": "Synchronous HTTP calls between core services are permitted during high-load periods.",
+          "type": "directive",
+          "polarity": "supports",
+          "evidence": [
+            {
+              "quote": "Synchronous HTTP calls between core services are permitted",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "http_calls_prohibited",
+          "statement": "Synchronous HTTP calls between core services are strictly prohibited during high-load periods.",
+          "type": "directive",
+          "polarity": "refutes",
+          "evidence": [
+            {
+              "quote": "Synchronous HTTP calls between core services are strictly prohibited",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [],
+      "semantic_decisions": [
+        {
+          "source_id": "http_calls_prohibited",
+          "target_id": "http_calls_permitted",
+          "decision": "contradicts",
+          "separate_blocks": true,
+          "review_task_generated": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 1,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "synchronous http calls high-load policy",
+        "top_result_id": "pair_negations::http_calls_prohibited"
+      },
+      "citations": [
+        {
+          "source": "pair_negations.md",
+          "page": 1,
+          "quote": "Synchronous HTTP calls between core services"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_quantities_units",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_quantities_units.md",
+      "domain_id": "platform",
+      "category": "configuration",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "API gateway timeout threshold is configured to 500 milliseconds for all client routes"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "qty-el-01",
+          "kind": "paragraph",
+          "text": "API gateway timeout threshold is configured to 500 milliseconds for all client routes."
+        },
+        {
+          "element_id": "qty-el-02",
+          "kind": "paragraph",
+          "text": "API gateway timeout threshold is configured to 5 seconds for all client routes."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "500 milliseconds",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "5 seconds",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "timeout_500ms_claim",
+          "statement": "API gateway timeout threshold is configured to 500 milliseconds.",
+          "type": "config",
+          "qualifiers": {
+            "quantity": 500,
+            "unit": "milliseconds"
+          },
+          "evidence": [
+            {
+              "quote": "500 milliseconds",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "timeout_5s_claim",
+          "statement": "API gateway timeout threshold is configured to 5 seconds.",
+          "type": "config",
+          "qualifiers": {
+            "quantity": 5,
+            "unit": "seconds"
+          },
+          "evidence": [
+            {
+              "quote": "5 seconds",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "API gateway",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-api-gateway"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "timeout_5s_claim",
+          "target_id": "timeout_500ms_claim",
+          "decision": "contradicts",
+          "separate_blocks": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "api gateway timeout threshold milliseconds",
+        "top_result_id": "pair_quantities_units::timeout_500ms_claim"
+      },
+      "citations": [
+        {
+          "source": "pair_quantities_units.md",
+          "page": 1,
+          "quote": "500 milliseconds"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_versions_dates",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_versions_dates.md",
+      "domain_id": "platform",
+      "category": "runtime_policy",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Target runtime environment is Python 3.11 effective January 2023"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "ver-el-01",
+          "kind": "paragraph",
+          "text": "Target runtime environment is Python 3.11 effective January 2023."
+        },
+        {
+          "element_id": "ver-el-02",
+          "kind": "paragraph",
+          "text": "Target runtime environment is Python 3.12 effective January 2024."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Python 3.11 effective January 2023",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "Python 3.12 effective January 2024",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "python_311_policy",
+          "statement": "Target runtime environment is Python 3.11 effective January 2023.",
+          "type": "standard",
+          "qualifiers": {
+            "version": "3.11",
+            "effective_date": "2023-01-01"
+          },
+          "evidence": [
+            {
+              "quote": "Python 3.11 effective January 2023",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "python_312_policy",
+          "statement": "Target runtime environment is Python 3.12 effective January 2024.",
+          "type": "standard",
+          "qualifiers": {
+            "version": "3.12",
+            "effective_date": "2024-01-01"
+          },
+          "evidence": [
+            {
+              "quote": "Python 3.12 effective January 2024",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Python",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-python"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "python_312_policy",
+          "target_id": "python_311_policy",
+          "decision": "supersedes",
+          "separate_blocks": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 1,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "target python runtime environment version",
+        "top_result_id": "pair_versions_dates::python_312_policy"
+      },
+      "citations": [
+        {
+          "source": "pair_versions_dates.md",
+          "page": 1,
+          "quote": "Python 3.12 effective January 2024"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_supersession",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_supersession.md",
+      "domain_id": "platform",
+      "category": "security_architecture",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Authentication uses monolithic session cookies stored in Redis"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "sup-el-01",
+          "kind": "paragraph",
+          "text": "Authentication uses monolithic session cookies stored in Redis."
+        },
+        {
+          "element_id": "sup-el-02",
+          "kind": "paragraph",
+          "text": "Authentication uses stateless signed OIDC JWT tokens verified at the gateway, superseding monolithic session cookies."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "monolithic session cookies stored in Redis",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "stateless signed OIDC JWT tokens verified at the gateway",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "auth_cookie_v1",
+          "statement": "Authentication uses monolithic session cookies stored in Redis.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "monolithic session cookies stored in Redis",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "auth_jwt_v2",
+          "statement": "Authentication uses stateless signed OIDC JWT tokens verified at the gateway.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "stateless signed OIDC JWT tokens verified at the gateway",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Redis",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-redis"
+        },
+        {
+          "term": "OIDC",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-oidc"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "auth_jwt_v2",
+          "target_id": "auth_cookie_v1",
+          "decision": "supersedes",
+          "separate_blocks": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 2,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "stateless signed oidc jwt authentication gateway",
+        "top_result_id": "pair_supersession::auth_jwt_v2"
+      },
+      "citations": [
+        {
+          "source": "pair_supersession.md",
+          "page": 1,
+          "quote": "stateless signed OIDC JWT tokens"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_conflicts",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_conflicts.md",
+      "domain_id": "platform",
+      "category": "database_governance",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Billing database allows direct read replicas for internal reporting"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "conf-el-01",
+          "kind": "paragraph",
+          "text": "Billing database allows direct read replicas for internal reporting."
+        },
+        {
+          "element_id": "conf-el-02",
+          "kind": "paragraph",
+          "text": "Direct database access to billing is prohibited; all reporting must query through the Billing API."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Billing database allows direct read replicas",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "Direct database access to billing is prohibited",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "billing_read_replica_allowed",
+          "statement": "Billing database allows direct read replicas for internal reporting.",
+          "type": "policy",
+          "evidence": [
+            {
+              "quote": "Billing database allows direct read replicas",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "billing_direct_access_prohibited",
+          "statement": "Direct database access to billing is prohibited; all reporting must query through the Billing API.",
+          "type": "policy",
+          "evidence": [
+            {
+              "quote": "Direct database access to billing is prohibited",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Billing API",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-billing-api"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "billing_direct_access_prohibited",
+          "target_id": "billing_read_replica_allowed",
+          "decision": "contradicts",
+          "separate_blocks": true,
+          "conflict_detected": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 1,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "billing database direct read replica reporting access",
+        "top_result_id": "pair_conflicts::billing_direct_access_prohibited"
+      },
+      "citations": [
+        {
+          "source": "pair_conflicts.md",
+          "page": 1,
+          "quote": "Direct database access to billing is prohibited"
+        }
+      ]
+    },
+    {
+      "fixture_id": "pair_unrelated_similar",
+      "class": "near_duplicates",
+      "path": "tests/fixtures/gold_corpus/pair_unrelated_similar.md",
+      "domain_id": "platform",
+      "category": "service_overview",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Order Service manages the state machine for customer purchase requests"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "unrel-el-01",
+          "kind": "paragraph",
+          "text": "Order Service manages the state machine for customer purchase requests."
+        },
+        {
+          "element_id": "unrel-el-02",
+          "kind": "paragraph",
+          "text": "Order Service maintains customer purchase requests in the order fulfillment database."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Order Service manages the state machine",
+          "page_number": 1,
+          "kind": "verbatim"
+        },
+        {
+          "quote": "Order Service maintains customer purchase requests in the order fulfillment database",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "order_service_state_machine",
+          "statement": "Order Service manages the state machine for customer purchase requests.",
+          "type": "component_spec",
+          "evidence": [
+            {
+              "quote": "Order Service manages the state machine",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        },
+        {
+          "id": "order_service_fulfillment_db",
+          "statement": "Order Service maintains customer purchase requests in the order fulfillment database.",
+          "type": "component_spec",
+          "evidence": [
+            {
+              "quote": "Order Service maintains customer purchase requests in the order fulfillment database",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "term": "Order Service",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-order-service"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "source_id": "order_service_fulfillment_db",
+          "target_id": "order_service_state_machine",
+          "decision": "distinct",
+          "separate_blocks": true
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "order service state machine customer purchase requests",
+        "top_result_id": "pair_unrelated_similar::order_service_state_machine"
+      },
+      "citations": [
+        {
+          "source": "pair_unrelated_similar.md",
+          "page": 1,
+          "quote": "Order Service manages the state machine"
+        }
+      ]
+    },
+    {
+      "fixture_id": "governance_adr_pgvector",
+      "class": "adr",
+      "path": "tests/fixtures/gold_corpus/governance_adr_records.md",
+      "domain_id": "platform",
+      "category": "adr",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Adopt PostgreSQL 16 with the pgvector extension and HNSW indexing"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "adr42-el-01",
+          "kind": "paragraph",
+          "text": "Adopt PostgreSQL 16 with the pgvector extension and HNSW indexing for all dense embedding storage."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Adopt PostgreSQL 16 with the pgvector extension",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "adr_pgvector_decision",
+          "statement": "Adopt PostgreSQL 16 with the pgvector extension and HNSW indexing for all dense embedding storage.",
+          "type": "adr_decision",
+          "evidence": [
+            {
+              "quote": "Adopt PostgreSQL 16 with the pgvector extension",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "governance_records": {
+        "record_type": "adr",
+        "record_id": "adr-0042",
+        "title": "Adopt PostgreSQL with pgvector for Vector Similarity Search",
+        "status": "accepted",
+        "owner": "Platform Architect",
+        "linked_idea_blocks": [
+          "adr_pgvector_decision"
+        ],
+        "linked_entities": [
+          "ent-postgresql",
+          "ent-pgvector"
+        ],
+        "audit_events": [
+          {
+            "action": "created",
+            "actor": "user-arch-01",
+            "date": "2026-03-15"
+          },
+          {
+            "action": "transitioned_accepted",
+            "actor": "user-arch-lead",
+            "date": "2026-04-01"
+          }
+        ]
+      },
+      "entity_outcomes": [
+        {
+          "term": "PostgreSQL",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-postgresql"
+        },
+        {
+          "term": "pgvector",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-pgvector"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "adr_pgvector_decision",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 1,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "adopt postgresql pgvector hnsw indexing vector search",
+        "top_result_id": "governance_adr_pgvector::adr_pgvector_decision"
+      },
+      "citations": [
+        {
+          "source": "governance_adr_records.md",
+          "page": 1,
+          "quote": "Adopt PostgreSQL 16 with the pgvector extension"
+        }
+      ]
+    },
+    {
+      "fixture_id": "governance_risk_stale_docs",
+      "class": "risk_register",
+      "path": "tests/fixtures/gold_corpus/governance_risk_records.md",
+      "domain_id": "platform",
+      "category": "risk",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Architecture documents can drift from deployed microservices unless automated freshness checks are enforced"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "risk105-el-01",
+          "kind": "paragraph",
+          "text": "Architecture documents can drift from deployed microservices unless automated freshness checks"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Architecture documents can drift from deployed microservices",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "risk_drift_claim",
+          "statement": "Architecture documents can drift from deployed microservices unless automated freshness checks are enforced.",
+          "type": "risk",
+          "evidence": [
+            {
+              "quote": "Architecture documents can drift from deployed microservices",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "governance_records": {
+        "record_type": "risk",
+        "record_id": "risk-0105",
+        "title": "Stale Architecture Documentation Causing Implementation Drift",
+        "status": "open",
+        "severity": "high",
+        "owner": "Architecture Steward",
+        "linked_mitigations": [
+          "mitigation-quarterly-review"
+        ],
+        "linked_entities": [
+          "ent-customer-platform"
+        ],
+        "audit_events": [
+          {
+            "action": "created",
+            "actor": "user-steward-01",
+            "date": "2026-02-10"
+          },
+          {
+            "action": "severity_assessed",
+            "actor": "user-gov-admin",
+            "date": "2026-03-01"
+          }
+        ]
+      },
+      "entity_outcomes": [
+        {
+          "term": "Customer Platform",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-customer-platform"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "risk_drift_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 1,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "architecture documentation drift freshness checks",
+        "top_result_id": "governance_risk_stale_docs::risk_drift_claim"
+      },
+      "citations": [
+        {
+          "source": "governance_risk_records.md",
+          "page": 1,
+          "quote": "Architecture documents can drift"
+        }
+      ]
+    },
+    {
+      "fixture_id": "governance_waiver_mtls",
+      "class": "waiver_record",
+      "path": "tests/fixtures/gold_corpus/governance_waiver_records.md",
+      "domain_id": "platform",
+      "category": "waiver",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Legacy accounting services cannot support TLS 1.3 certificates before the planned Q4 service mesh cutover"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "waiver33-el-01",
+          "kind": "paragraph",
+          "text": "Legacy accounting services cannot support TLS 1.3 certificates"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Legacy accounting services cannot support TLS 1.3 certificates",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "waiver_mtls_claim",
+          "statement": "Legacy accounting services cannot support TLS 1.3 certificates before the planned Q4 service mesh cutover.",
+          "type": "waiver_justification",
+          "evidence": [
+            {
+              "quote": "Legacy accounting services cannot support TLS 1.3 certificates",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "governance_records": {
+        "record_type": "waiver",
+        "record_id": "waiver-0033",
+        "title": "Temporary Exemption from Strict Mutual TLS for Legacy Internal Services",
+        "status": "approved",
+        "owner": "Security Lead",
+        "valid_from": "2026-01-01",
+        "valid_to": "2026-12-31",
+        "conditions": [
+          "Service account token validation",
+          "VPC-Private-02 isolation"
+        ],
+        "audit_events": [
+          {
+            "action": "submitted",
+            "actor": "user-lead-02",
+            "date": "2026-01-01"
+          },
+          {
+            "action": "approved",
+            "actor": "user-ciso-01",
+            "date": "2026-01-05"
+          }
+        ]
+      },
+      "entity_outcomes": [
+        {
+          "term": "Order Service",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-order-service"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "waiver_mtls_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 1,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "legacy accounting tls 1.3 exemption waiver",
+        "top_result_id": "governance_waiver_mtls::waiver_mtls_claim"
+      },
+      "citations": [
+        {
+          "source": "governance_waiver_records.md",
+          "page": 1,
+          "quote": "Legacy accounting services cannot support TLS 1.3"
+        }
+      ]
+    },
+    {
+      "fixture_id": "governance_debt_direct_db",
+      "class": "technical_debt_record",
+      "path": "tests/fixtures/gold_corpus/governance_debt_records.md",
+      "domain_id": "platform",
+      "category": "technical_debt",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Reporting batch workers perform direct SQL read queries against the Order Service relational database"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "debt78-el-01",
+          "kind": "paragraph",
+          "text": "Reporting batch workers perform direct SQL read queries against the Order Service relational database"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Reporting batch workers perform direct SQL read queries",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "debt_direct_db_claim",
+          "statement": "Reporting batch workers perform direct SQL read queries against the Order Service relational database, breaking encapsulation.",
+          "type": "technical_debt",
+          "evidence": [
+            {
+              "quote": "Reporting batch workers perform direct SQL read queries",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "governance_records": {
+        "record_type": "technical_debt",
+        "record_id": "debt-0078",
+        "title": "Direct Database Queries Bypassing Order Service Domain Boundary",
+        "status": "identified",
+        "owner": "Principal Engineer",
+        "estimated_cost_hours": 120,
+        "interest_score": 8.5,
+        "remediation_plan": "Expose paginated asynchronous query endpoints on Order Service API",
+        "linked_entities": [
+          "ent-reporting-worker",
+          "ent-order-service-db"
+        ],
+        "audit_events": [
+          {
+            "action": "recorded",
+            "actor": "user-principal-01",
+            "date": "2026-02-18"
+          },
+          {
+            "action": "interest_updated",
+            "actor": "user-principal-01",
+            "date": "2026-03-02"
+          }
+        ]
+      },
+      "entity_outcomes": [
+        {
+          "term": "Order Service",
+          "outcome": "canonical_resolved",
+          "entity_id": "ent-order-service"
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "debt_direct_db_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 1,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "reporting batch workers direct sql read queries encapsulation debt",
+        "top_result_id": "governance_debt_direct_db::debt_direct_db_claim"
+      },
+      "citations": [
+        {
+          "source": "governance_debt_records.md",
+          "page": 1,
+          "quote": "Reporting batch workers perform direct SQL"
+        }
+      ]
+    },
+    {
+      "fixture_id": "governance_backlog_worker",
+      "class": "architecture_backlog_record",
+      "path": "tests/fixtures/gold_corpus/governance_backlog_records.md",
+      "domain_id": "platform",
+      "category": "architecture_backlog",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Consolidate to a single worker profile consuming prioritized queues"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "backlog12-el-01",
+          "kind": "paragraph",
+          "text": "Consolidate to a single worker profile consuming prioritized queues (ingest, extract, embedding, review, maintenance)."
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Consolidate to a single worker profile consuming prioritized queues",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "backlog_single_worker_claim",
+          "statement": "Consolidate to a single worker profile consuming prioritized queues.",
+          "type": "backlog_correction",
+          "evidence": [
+            {
+              "quote": "Consolidate to a single worker profile consuming prioritized queues",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "governance_records": {
+        "record_type": "architecture_backlog",
+        "record_id": "backlog-0012",
+        "title": "Refactor Ingestion Pipeline to Consolidated Worker Profile",
+        "status": "pending",
+        "owner": "Staff Systems Engineer",
+        "priority": "high",
+        "external_issue_ref": "PROJ-14029",
+        "external_issue_url": "https://tracker.corp.internal/issues/PROJ-14029",
+        "correction_lineage": {
+          "interim_arrangement": "Split specialized worker containers",
+          "target_architecture": "single_worker_modular"
+        },
+        "audit_events": [
+          {
+            "action": "created",
+            "actor": "user-staff-01",
+            "date": "2026-04-10"
+          },
+          {
+            "action": "external_issue_bound",
+            "actor": "user-staff-01",
+            "date": "2026-04-12"
+          }
+        ]
+      },
+      "entity_outcomes": [],
+      "semantic_decisions": [
+        {
+          "candidate_id": "backlog_single_worker_claim",
+          "decision": "distinct"
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 1
+      },
+      "search_expectations": {
+        "query": "consolidate single worker profile prioritized queues backlog",
+        "top_result_id": "governance_backlog_worker::backlog_single_worker_claim"
+      },
+      "citations": [
+        {
+          "source": "governance_backlog_records.md",
+          "page": 1,
+          "quote": "Consolidate to a single worker profile"
+        }
+      ]
+    },
+    {
+      "fixture_id": "vocabulary_grounding_suite",
+      "class": "controlled_vocabulary",
+      "path": "tests/fixtures/gold_corpus/vocabulary_grounding_cases.md",
+      "domain_id": "platform",
+      "category": "vocabulary",
+      "sensitivity": "internal",
+      "expected_assertions": [
+        "Governed architecture vocabulary defines canonical identifiers, aliases, homonyms, and ontology constraints"
+      ],
+      "expected_pages": 1,
+      "expected_elements": [
+        {
+          "element_id": "vocab-el-01",
+          "kind": "paragraph",
+          "text": "Canonical Entity: PostgreSQL (ID: ent-postgresql, kind: database)"
+        }
+      ],
+      "evidence_locations": [
+        {
+          "quote": "Canonical Entity: PostgreSQL",
+          "page_number": 1,
+          "kind": "verbatim"
+        }
+      ],
+      "claims": [
+        {
+          "id": "vocab_canonical_grounding",
+          "statement": "Governed architecture vocabulary defines canonical identifiers, aliases, homonyms, and ontology constraints.",
+          "type": "vocabulary_rule",
+          "evidence": [
+            {
+              "quote": "Canonical Entity: PostgreSQL",
+              "kind": "paragraph",
+              "page_number": 1
+            }
+          ]
+        }
+      ],
+      "entity_outcomes": [
+        {
+          "mention": "PostgreSQL",
+          "outcome": "canonical_resolved",
+          "canonical_id": "ent-postgresql"
+        },
+        {
+          "mention": "K8s",
+          "outcome": "alias_resolved",
+          "canonical_id": "ent-kubernetes"
+        },
+        {
+          "mention": "Cluster",
+          "outcome": "homonym_ambiguous",
+          "candidates": [
+            "ent-postgresql-cluster",
+            "ent-kubernetes-cluster"
+          ]
+        },
+        {
+          "mention": "SuperGraphMeshV3",
+          "outcome": "unknown_unresolved",
+          "review_task_generated": true
+        }
+      ],
+      "semantic_decisions": [
+        {
+          "candidate_id": "vocab_canonical_grounding",
+          "decision": "distinct"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "billing_api_depends_on_customer_platform",
+          "source": "Billing API",
+          "target": "Customer Platform",
+          "type": "depends_on",
+          "evidence": {
+            "quote": "Valid Relation: Service Billing API -> depends_on -> System Customer Platform"
+          }
+        }
+      ],
+      "governance_counts": {
+        "adrs": 0,
+        "risks": 0,
+        "waivers": 0,
+        "debt": 0,
+        "backlog": 0
+      },
+      "search_expectations": {
+        "query": "canonical vocabulary entity grounding alias resolution",
+        "top_result_id": "vocabulary_grounding_suite::vocab_canonical_grounding"
+      },
+      "citations": [
+        {
+          "source": "vocabulary_grounding_cases.md",
+          "page": 1,
+          "quote": "Canonical Entity: PostgreSQL"
+        }
+      ]
+    }
+  ]
+}

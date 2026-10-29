@@ -1,0 +1,169 @@
+"""Batch ingestion of a body of material that arrived as a tree of files.
+
+Each file keeps its place in the tree. The folder a file sits in is recorded
+on the source and handed to the extractor as a categorisation hint, so a
+reader does not have to categorise every file by hand and the decision stays
+visible in the source record.
+
+The hint is guidance, never evidence: it says where a document was filed, not
+what it asserts.
+"""
+
+from __future__ import annotations
+
+import json
+import tempfile
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Annotated
+
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+
+from app.source_routes import (
+    dispatch_job_or_mark_failed,
+    get_session_factory,
+    get_source_ingestion_service,
+    log_api_interaction,
+    maybe_require_permission,
+    normalize_domain_id,
+    normalize_extraction_mode,
+    require_llm_ingestion_ready,
+    requires_llm_extraction,
+    resolve_known_domain_id,
+)
+from margin_db.source_ingestion_helpers import UnsupportedSourceTypeError
+from margin_ingest.folder_context import folder_context_for_path
+
+router = APIRouter(prefix="/api/sources", tags=["sources"])
+
+MAX_BATCH_FILES = 50
+
+
+@router.post("/batch", status_code=201)
+async def upload_source_batch(
+    request: Request,
+    files: Annotated[list[UploadFile], File()],
+    paths: Annotated[str | None, Form()] = None,
+    source_owner: Annotated[str | None, Form()] = None,
+    source_language: Annotated[str | None, Form()] = None,
+    extraction_mode: Annotated[str | None, Form()] = None,
+    extraction_priority: Annotated[str | None, Form()] = None,
+    review_owner: Annotated[str | None, Form()] = None,
+    source_type: Annotated[str | None, Form()] = None,
+    source_date: Annotated[str | None, Form()] = None,
+    domain_id: Annotated[str | None, Form()] = None,
+    category: Annotated[str | None, Form()] = None,
+    sensitivity: Annotated[str, Form()] = "internal",
+) -> dict[str, object]:
+    """Ingest a body of material that arrived as a tree of files."""
+
+    start = datetime.now(UTC)
+    if not files:
+        raise HTTPException(status_code=422, detail="at least one file is required")
+    if len(files) > MAX_BATCH_FILES:
+        raise HTTPException(status_code=422, detail=f"a batch may contain at most {MAX_BATCH_FILES} files")
+    relative_paths = _batch_relative_paths(paths, files)
+    normalized_extraction_mode = normalize_extraction_mode(extraction_mode)
+    requested_domain_id = normalize_domain_id(domain_id)
+    service = get_source_ingestion_service(request)
+    session_factory = get_session_factory(request)
+
+    results: list[dict[str, object]] = []
+    with session_factory() as session:
+        batch_domain_id = resolve_known_domain_id(session, requested_domain_id)
+        if requires_llm_extraction(normalized_extraction_mode):
+            require_llm_ingestion_ready(session)
+        maybe_require_permission(
+            request, domain_id=batch_domain_id, category=category, sensitivity=sensitivity, action="write"
+        )
+        for upload, relative_path in zip(files, relative_paths, strict=True):
+            filename = upload.filename or "upload"
+            folder_context = folder_context_for_path(relative_path)
+            try:
+                with tempfile.NamedTemporaryFile(prefix="margin-batch-", suffix=".tmp", delete=False) as temp_file:
+                    while chunk := await upload.read(1024 * 1024):
+                        temp_file.write(chunk)
+                    temp_file.flush()
+                    temp_path = Path(temp_file.name)
+                try:
+                    result = service.upload_source_file(
+                        session,
+                        filename=filename,
+                        media_type=upload.content_type,
+                        path=temp_path,
+                        source_uri=relative_path or None,
+                        domain_id=batch_domain_id,
+                        category=category,
+                        sensitivity=sensitivity,
+                        actor=getattr(request.state, "principal_id", None),
+                        auto_process=False,
+                        owner=source_owner,
+                        steward=review_owner,
+                        metadata={
+                            "extraction_mode": normalized_extraction_mode,
+                            "relative_path": relative_path or None,
+                            "folder_context": folder_context or None,
+                            **({"source_language": source_language} if source_language else {}),
+                            **({"extraction_priority": extraction_priority} if extraction_priority else {}),
+                            **({"source_date": source_date} if source_date else {}),
+                            **({"source_type": source_type} if source_type else {}),
+                        },
+                    )
+                finally:
+                    temp_path.unlink(missing_ok=True)
+            except UnsupportedSourceTypeError as exc:
+                results.append(
+                    {
+                        "relative_path": relative_path,
+                        "filename": filename,
+                        "folder_context": folder_context,
+                        "status": "unsupported",
+                        "detail": str(exc),
+                    }
+                )
+                continue
+            queue_task_id = None
+            if result.ingestion_job is not None and not result.cached:
+                queue_task_id = dispatch_job_or_mark_failed(request, session, job=result.ingestion_job)
+            results.append(
+                {
+                    "relative_path": relative_path,
+                    "filename": filename,
+                    "folder_context": folder_context,
+                    "status": "accepted",
+                    "source_document_id": result.source_document.id,
+                    "ingestion_job_id": (result.ingestion_job.id if result.ingestion_job is not None else None),
+                    "queue_task_id": queue_task_id,
+                }
+            )
+        session.commit()
+
+    accepted = [item for item in results if item["status"] == "accepted"]
+    log_api_interaction(
+        event="upload_source_batch",
+        request_payload={
+            "file_count": len(files),
+            "domain_id": batch_domain_id,
+            "category": category,
+            "sensitivity": sensitivity,
+        },
+        response_payload={"status_code": 201, "accepted": len(accepted), "rejected": len(results) - len(accepted)},
+        start=start,
+    )
+    return {"accepted": len(accepted), "rejected": len(results) - len(accepted), "results": results}
+
+
+def _batch_relative_paths(paths: str | None, files: list[UploadFile]) -> list[str]:
+    """Return the relative path of each uploaded file."""
+
+    if paths:
+        try:
+            parsed = json.loads(paths)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail="paths must be a JSON array of strings") from error
+        if not isinstance(parsed, list) or not all(isinstance(item, str) for item in parsed):
+            raise HTTPException(status_code=422, detail="paths must be a JSON array of strings")
+        if len(parsed) != len(files):
+            raise HTTPException(status_code=422, detail="paths must have one entry per file")
+        return [item for item in parsed]
+    return [upload.filename or "" for upload in files]

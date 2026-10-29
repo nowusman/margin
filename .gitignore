@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest-tmp-audit/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+node_modules/
+dist/
+.env
+.margin/
+*.egg-info/
+.DS_Store
+.gitattributes
+env
+.idea/
+.tmp-pdf-check/
+
+# frontend test artifacts
+apps/web/test-results/
+apps/web/playwright-report/
